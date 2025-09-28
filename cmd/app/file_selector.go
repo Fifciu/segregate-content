@@ -1,13 +1,11 @@
-package utilities
+package app
 
 import (
-	"segregate-content/cmd/app"
-
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type FileSelector struct {
-	app  *app.App
+	app  *App
 	file string
 }
 
@@ -35,7 +33,7 @@ func (d *FileSelector) GetFile() string {
 	return d.file
 }
 
-func NewFileSelector(app *app.App) *FileSelector {
+func NewFileSelector(app *App) *FileSelector {
 	return &FileSelector{
 		app: app,
 	}

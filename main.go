@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"segregate-content/cmd/app"
-	"segregate-content/cmd/utilities"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -24,8 +23,8 @@ var icon []byte
 func main() {
 	// Create an instance of the app structure
 	appInstance := app.NewApp()
-	fileSelector := utilities.NewFileSelector(appInstance)
-	directorySelector := utilities.NewDirectorySelector(appInstance)
+	fileSelector := app.NewFileSelector(appInstance)
+	directorySelector := app.NewDirectorySelector(appInstance)
 	processor := app.NewProcessor(appInstance)
 
 	// Create application with options

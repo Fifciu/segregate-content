@@ -2,8 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router"
 import { useState } from "react"
-import { SelectFile, GetFile } from "../../wailsjs/go/utilities/FileSelector"
-import { SelectDirectory, GetDirectory } from "../../wailsjs/go/utilities/DirectorySelector"
+  import { SelectFile, GetFile } from "../../wailsjs/go/app/FileSelector"
+import { SelectDirectory, GetDirectory } from "../../wailsjs/go/app/DirectorySelector"
 import { CreateProject } from "../../wailsjs/go/app/Processor"
 
 const HOME_COUNTRY = "Polska";

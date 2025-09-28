@@ -1,19 +1,8 @@
-import { Button } from "@/components/ui/button"
-import React, { useEffect } from "react"
-import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  // CardAction,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import ProjectTile from "./components/ProjectTile"
 import NewProjectTile from "./components/NewProjectTile"
 
 function Home() {
-  const [count, setCount] = React.useState(0)
+  // const [projects, setProjects] = React.useState([])
 
   return (
     <div className="min-h-screen bg-white py-8 px-4">

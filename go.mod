@@ -4,7 +4,10 @@ go 1.22.0
 
 toolchain go1.24.7
 
-require github.com/wailsapp/wails/v2 v2.10.2
+require (
+	github.com/barasher/go-exiftool v1.10.0
+	github.com/wailsapp/wails/v2 v2.10.2
+)
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
