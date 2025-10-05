@@ -40,7 +40,7 @@ func (p *Processor) doNeedTimezoneOffset(cameras []*cameras.Camera) bool {
 	return false
 }
 
-func (p *Processor) CreateProject(project *Project) ([][]*ProcessedFile, error) {
+func (p *Processor) CreateProject(project *Project) ([][][]*ProcessedFile, error) {
 	fmt.Println("Processing project:", project)
 	directoryExists, err := utilities.DirectoryExists(project.Folder)
 	if err != nil {
@@ -101,6 +101,8 @@ func (p *Processor) CreateProject(project *Project) ([][]*ProcessedFile, error) 
 	for _, processedFile := range processedFiles {
 		fmt.Printf("Processed file (%s) timestamp: %s (legacy: %s)\n", processedFile.Filename, processedFile.NormalizedTimestamp, processedFile.LegacyTimestamp)
 	}
+
+	// Grouping files in blocks
 	groupedFiles := make([][]*ProcessedFile, 0)
 	MAX_DIFF := time.Duration(20 * time.Minute)
 	currentGroup := make([]*ProcessedFile, 0)
@@ -121,13 +123,32 @@ func (p *Processor) CreateProject(project *Project) ([][]*ProcessedFile, error) 
 			fmt.Printf("File: %s, %s\n", file.Filename, file.NormalizedTimestamp.Format("2006-01-02 15:04:05.000"))
 		}
 	}
+
+	// Grouping blocks in days
+	days := make([][][]*ProcessedFile, 0)
+	day := make([][]*ProcessedFile, 0)
+	currentDay := groupedFiles[0][0].NormalizedTimestamp.Format("2006-01-02")
+	day = append(day, groupedFiles[0])
+
+	for i := 1; i < len(groupedFiles); i++ {
+		if groupedFiles[i][0].NormalizedTimestamp.Format("2006-01-02") != currentDay {
+			days = append(days, day)
+			day = make([][]*ProcessedFile, 0)
+			currentDay = groupedFiles[i][0].NormalizedTimestamp.Format("2006-01-02")
+		} else {
+			day = append(day, groupedFiles[i])
+		}
+	}
+
+	p.app.SetSelectedProjectPath(project.Folder)
 	fmt.Println("Project processed")
-	return groupedFiles, nil
+	return days, nil
 }
 
 type ProcessedFile struct {
 	Camera              *cameras.Camera
 	Filename            string
+	CameraPath          string
 	NormalizedTimestamp time.Time
 	LegacyTimestamp     time.Time
 }
@@ -216,6 +237,7 @@ func (p *Processor) ProcessFiles(project *Project, cameraMap map[string]*cameras
 				processedFile := &ProcessedFile{
 					Camera:              camera,
 					Filename:            file,
+					CameraPath:          directory,
 					NormalizedTimestamp: *normalizedTimestamp,
 					LegacyTimestamp:     parsedTimestamp,
 				}
@@ -261,6 +283,7 @@ func (p *Processor) ProcessFiles(project *Project, cameraMap map[string]*cameras
 				processedFile := &ProcessedFile{
 					Camera:              camera,
 					Filename:            file,
+					CameraPath:          directory,
 					NormalizedTimestamp: *normalizedTimestamp,
 					LegacyTimestamp:     parsedTimestamp,
 				}

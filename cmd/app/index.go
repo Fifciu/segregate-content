@@ -7,7 +7,8 @@ import (
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx                 context.Context
+	selectedProjectPath string
 }
 
 // NewApp creates a new App application struct
@@ -45,4 +46,12 @@ func (a *App) Greet(name string) string {
 
 func (a *App) GetCtx() context.Context {
 	return a.ctx
+}
+
+func (a *App) GetSelectedProjectPath() string {
+	return a.selectedProjectPath
+}
+
+func (a *App) SetSelectedProjectPath(path string) {
+	a.selectedProjectPath = path
 }

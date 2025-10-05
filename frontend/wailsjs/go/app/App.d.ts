@@ -4,6 +4,10 @@ import {context} from '../models';
 
 export function GetCtx():Promise<context.Context>;
 
+export function GetSelectedProjectPath():Promise<string>;
+
 export function Greet(arg1:string):Promise<string>;
 
 export function OnDomReady(arg1:context.Context):Promise<void>;
+
+export function SetSelectedProjectPath(arg1:string):Promise<void>;

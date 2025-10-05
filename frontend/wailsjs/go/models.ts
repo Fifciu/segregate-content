@@ -3,6 +3,7 @@ export namespace app {
 	export class ProcessedFile {
 	    Camera?: any;
 	    Filename: string;
+	    CameraPath: string;
 	    // Go type: time
 	    NormalizedTimestamp: any;
 	    // Go type: time
@@ -16,6 +17,7 @@ export namespace app {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Camera = source["Camera"];
 	        this.Filename = source["Filename"];
+	        this.CameraPath = source["CameraPath"];
 	        this.NormalizedTimestamp = this.convertValues(source["NormalizedTimestamp"], null);
 	        this.LegacyTimestamp = this.convertValues(source["LegacyTimestamp"], null);
 	    }

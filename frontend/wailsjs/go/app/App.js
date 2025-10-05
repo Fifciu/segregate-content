@@ -6,10 +6,18 @@ export function GetCtx() {
   return window['go']['app']['App']['GetCtx']();
 }
 
+export function GetSelectedProjectPath() {
+  return window['go']['app']['App']['GetSelectedProjectPath']();
+}
+
 export function Greet(arg1) {
   return window['go']['app']['App']['Greet'](arg1);
 }
 
 export function OnDomReady(arg1) {
   return window['go']['app']['App']['OnDomReady'](arg1);
+}
+
+export function SetSelectedProjectPath(arg1) {
+  return window['go']['app']['App']['SetSelectedProjectPath'](arg1);
 }
