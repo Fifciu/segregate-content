@@ -3,6 +3,7 @@ package cameras
 import (
 	"segregate-content/cmd/utilities"
 	"strings"
+	"time"
 )
 
 type CameraLumix struct{}
@@ -25,6 +26,15 @@ func (c *CameraLumix) HasSyncedClock() bool {
 
 func (c *CameraLumix) HasCoordinates() bool {
 	return false
+}
+
+func (c *CameraLumix) ShouldProcessFile(file string) bool {
+	return strings.HasPrefix(file, "P") && (strings.HasSuffix(file, ".MOV") || strings.HasSuffix(file, ".RW2") || strings.HasSuffix(file, ".JPG"))
+}
+
+func (c *CameraLumix) NormalizeDateTime(datetime *time.Time, timezoneOffsetSeconds int) *time.Time {
+	t := datetime.Add(time.Duration(timezoneOffsetSeconds) * time.Second * -1)
+	return &t
 }
 
 func isLumix(directory string, fullPath string) bool {

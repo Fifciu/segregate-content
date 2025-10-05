@@ -1,11 +1,15 @@
 package cameras
 
+import "time"
+
 type Camera interface {
 	GetCameraType() int
 	GetCameraName() string
 	IsCamera(directory string, fullPath string) bool
 	HasSyncedClock() bool
 	HasCoordinates() bool
+	ShouldProcessFile(file string) bool
+	NormalizeDateTime(datetime *time.Time, timezoneOffsetSeconds int) *time.Time
 }
 
 const (

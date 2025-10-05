@@ -10,11 +10,13 @@ const HOME_COUNTRY = "Polska";
 
 export default function NewProject() {
   const [formData, setFormData] = useState({
-    name: "",
+    name: "Islandia",
     // TODO: I could keep it in the backend to prevent overwriting
-    folder: null as string | null,
+    folder: '/Volumes/Fifciuu SSD/Example',
+    // folder: '/Volumes/Expansion/Zawartość/Islandia',
     planFile: null as string | null
   });
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (field: string, value: string | null) => {
@@ -38,12 +40,17 @@ export default function NewProject() {
 
   async function createProject() {
     setIsLoading(true);
-    await CreateProject({
-      Name: formData.name,
-      Folder: formData.folder || "",
-      PlanFile: formData.planFile || "",
-      HomeCountry: HOME_COUNTRY
-    })
+    try {
+      const resp = await CreateProject({
+        Name: formData.name,
+        Folder: formData.folder || "",
+        PlanFile: formData.planFile || "",
+        HomeCountry: HOME_COUNTRY
+      });
+      console.log(resp, 'RSP');
+    } catch (err) {
+      setError(err as string)
+    }
     setIsLoading(false);
   }
   return (
@@ -127,6 +134,8 @@ export default function NewProject() {
                 </p>
               </div>
               
+              <div>
+              {error && <p className="text-red-500">{error}</p>}
               <div className="flex gap-4 pt-4">
                 <div className={isLoading ? "pointer-events-none opacity-50" : ""}>
                   <Button asChild>
@@ -143,6 +152,7 @@ export default function NewProject() {
                     "Utwórz projekt"
                   )}
                 </Button>
+              </div>
               </div>
             </CardContent>
           </Card>

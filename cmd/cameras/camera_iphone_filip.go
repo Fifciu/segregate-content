@@ -1,6 +1,9 @@
 package cameras
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
 
 type CameraIphoneFilip struct{}
 
@@ -22,6 +25,14 @@ func (c *CameraIphoneFilip) HasSyncedClock() bool {
 
 func (c *CameraIphoneFilip) HasCoordinates() bool {
 	return true
+}
+
+func (c *CameraIphoneFilip) ShouldProcessFile(file string) bool {
+	return strings.HasPrefix(file, "IMG_") && (strings.HasSuffix(file, ".MOV") || strings.HasSuffix(file, ".HEIC") || strings.HasSuffix(file, ".mov"))
+}
+
+func (c *CameraIphoneFilip) NormalizeDateTime(datetime *time.Time, timezoneOffsetSeconds int) *time.Time {
+	return datetime
 }
 
 func isIphoneFilip(directory string, fullPath string) bool {

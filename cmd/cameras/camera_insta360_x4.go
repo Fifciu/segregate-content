@@ -3,6 +3,7 @@ package cameras
 import (
 	"segregate-content/cmd/utilities"
 	"strings"
+	"time"
 )
 
 type CameraInsta360X4 struct{}
@@ -25,6 +26,14 @@ func (c *CameraInsta360X4) HasSyncedClock() bool {
 
 func (c *CameraInsta360X4) HasCoordinates() bool {
 	return false
+}
+
+func (c *CameraInsta360X4) ShouldProcessFile(file string) bool {
+	return strings.HasSuffix(file, ".insv") && strings.HasPrefix(file, "VID_")
+}
+
+func (c *CameraInsta360X4) NormalizeDateTime(datetime *time.Time, timezoneOffsetSeconds int) *time.Time {
+	return datetime
 }
 
 func isInsta360_X4(directory string, fullPath string) bool {

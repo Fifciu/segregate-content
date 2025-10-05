@@ -5,3 +5,11 @@
 export function CreateProject(arg1) {
   return window['go']['app']['Processor']['CreateProject'](arg1);
 }
+
+export function FindTimezone(arg1) {
+  return window['go']['app']['Processor']['FindTimezone'](arg1);
+}
+
+export function ProcessFiles(arg1, arg2, arg3, arg4) {
+  return window['go']['app']['Processor']['ProcessFiles'](arg1, arg2, arg3, arg4);
+}
