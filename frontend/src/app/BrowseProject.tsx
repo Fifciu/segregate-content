@@ -1,5 +1,6 @@
 import TwoValuesSwitch from "./components/TwoValuesSwitch";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import clsx from "clsx";
 
 export default function BrowseProject() {
@@ -10,13 +11,25 @@ export default function BrowseProject() {
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
   const currentFile = projectData[currentDay][currentBlock][currentFileIndex];
   const [viewMode, setViewMode] = useState<'Tilemap' | 'Single preview'>('Tilemap');
+  const [blockNames, setBlockNames] = useState<Record<string, string>>({});
+  const [inputValue, setInputValue] = useState('');
+  const navigate = useNavigate();
+  
+  // Update input value when switching blocks
+  useEffect(() => {
+    const blockKey = `${currentDay}-${currentBlock}`;
+    setInputValue(blockNames[blockKey] || `Block ${currentBlock + 1}`);
+  }, [currentDay, currentBlock, blockNames]);
   
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const blockName = formData.get('blockName');
-    console.log('Saving block name:', blockName);
-    // Here you would typically save to backend or update state
+    const blockKey = `${currentDay}-${currentBlock}`;
+    if (inputValue && inputValue.trim()) {
+      setBlockNames(prev => ({
+        ...prev,
+        [blockKey]: inputValue.trim()
+      }));
+    }
   };
   
   return (
@@ -78,7 +91,8 @@ export default function BrowseProject() {
                   name="blockName"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter block name"
-                  defaultValue={`Block ${currentBlock + 1}`}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
                 />
               </div>
               <button
@@ -122,7 +136,7 @@ export default function BrowseProject() {
         {/* Block carousel */}
         <div className="min-w-0">
           <h3 className="text-lg font-semibold mb-3">Blocks</h3>
-          <div className="flex overflow-x-auto gap-2 pb-2">
+          <div className="flex overflow-x-auto gap-2 pb-2 h-[102px]">
             {projectData[currentDay].map((_, blockIndex) => (
               <div 
                 key={blockIndex}
@@ -137,13 +151,23 @@ export default function BrowseProject() {
                 }}
               >
                 <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                  <span className="text-sm font-medium text-gray-600">
-                    Block {blockIndex + 1}
+                  <span className="text-sm font-medium text-gray-600 text-center px-1">
+                    {blockNames[`${currentDay}-${blockIndex}`] || `Block ${blockIndex + 1}`}
                   </span>
                 </div>
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Go to summary button */}
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={() => navigate('/project-summary')}
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+          >
+            Go to summary
+          </button>
         </div>
         </div>
       </div>

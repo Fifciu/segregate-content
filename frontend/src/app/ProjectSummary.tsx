@@ -1,0 +1,107 @@
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "react-router";
+import clsx from "clsx";
+import { useState } from "react";
+
+export default function ProjectSummary() {
+  const projectData = [[[{ "Camera": {}, "Filename": "VID_20240703_164016_00_002.insv", "CameraPath": "Insta360", "NormalizedTimestamp": "2024-07-03T14:40:16Z", "LegacyTimestamp": "2024-07-03T14:40:16Z" }, { "Camera": {}, "Filename": "VID_20240703_164114_00_003.insv", "CameraPath": "Insta360", "NormalizedTimestamp": "2024-07-03T14:41:14Z", "LegacyTimestamp": "2024-07-03T14:41:14Z" }], [{ "Camera": {}, "Filename": "DJI_0600.JPG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T17:27:36Z", "LegacyTimestamp": "2024-07-04T19:27:32Z" }, { "Camera": {}, "Filename": "DJI_0601.DNG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T17:27:38Z", "LegacyTimestamp": "2024-07-04T19:27:32Z" }, { "Camera": {}, "Filename": "DJI_0601.JPG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T17:27:38Z", "LegacyTimestamp": "2024-07-04T19:27:32Z" }, { "Camera": {}, "Filename": "DJI_0602.JPG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T17:27:38Z", "LegacyTimestamp": "2024-07-04T19:27:33Z" }, { "Camera": {}, "Filename": "DJI_0602.DNG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T17:27:40Z", "LegacyTimestamp": "2024-07-04T19:27:32Z" }], [{ "Camera": {}, "Filename": "DJI_0603.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:30:50Z", "LegacyTimestamp": "2024-07-04T22:30:26Z" }, { "Camera": {}, "Filename": "DJI_0604.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:31:28Z", "LegacyTimestamp": "2024-07-04T22:31:08Z" }, { "Camera": {}, "Filename": "DJI_0605.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:32:18Z", "LegacyTimestamp": "2024-07-04T22:31:33Z" }, { "Camera": {}, "Filename": "DJI_0606.JPG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:32:38Z", "LegacyTimestamp": "2024-07-05T00:32:38Z" }, { "Camera": {}, "Filename": "DJI_0606.DNG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:32:40Z", "LegacyTimestamp": "2024-07-05T00:32:38Z" }, { "Camera": {}, "Filename": "DJI_0607.DNG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:32:42Z", "LegacyTimestamp": "2024-07-05T00:32:38Z" }, { "Camera": {}, "Filename": "DJI_0607.JPG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:32:42Z", "LegacyTimestamp": "2024-07-05T00:32:38Z" }, { "Camera": {}, "Filename": "DJI_0608.JPG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:32:42Z", "LegacyTimestamp": "2024-07-05T00:32:38Z" }, { "Camera": {}, "Filename": "DJI_0608.DNG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:32:44Z", "LegacyTimestamp": "2024-07-05T00:32:38Z" }, { "Camera": {}, "Filename": "DJI_0609.JPG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:32:44Z", "LegacyTimestamp": "2024-07-05T00:32:39Z" }, { "Camera": {}, "Filename": "DJI_0609.DNG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:32:46Z", "LegacyTimestamp": "2024-07-05T00:32:38Z" }, { "Camera": {}, "Filename": "DJI_0610.DNG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:32:46Z", "LegacyTimestamp": "2024-07-05T00:32:38Z" }, { "Camera": {}, "Filename": "DJI_0610.JPG", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:32:46Z", "LegacyTimestamp": "2024-07-05T00:32:39Z" }, { "Camera": {}, "Filename": "DJI_0611.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:33:20Z", "LegacyTimestamp": "2024-07-04T22:33:01Z" }, { "Camera": {}, "Filename": "DJI_0612.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:34:10Z", "LegacyTimestamp": "2024-07-04T22:33:25Z" }, { "Camera": {}, "Filename": "DJI_0613.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:34:54Z", "LegacyTimestamp": "2024-07-04T22:34:33Z" }, { "Camera": {}, "Filename": "DJI_0614.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:35:14Z", "LegacyTimestamp": "2024-07-04T22:34:57Z" }, { "Camera": {}, "Filename": "DJI_0615.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:35:54Z", "LegacyTimestamp": "2024-07-04T22:35:41Z" }, { "Camera": {}, "Filename": "DJI_0616.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:37:04Z", "LegacyTimestamp": "2024-07-04T22:36:20Z" }, { "Camera": {}, "Filename": "DJI_0617.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:37:52Z", "LegacyTimestamp": "2024-07-04T22:37:15Z" }, { "Camera": {}, "Filename": "DJI_0618.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-03T22:38:40Z", "LegacyTimestamp": "2024-07-04T22:38:12Z" }]], [[{ "Camera": {}, "Filename": "P1090342.MOV", "CameraPath": "Lumix", "NormalizedTimestamp": "2024-07-04T15:05:29Z", "LegacyTimestamp": "2024-07-04T17:05:29Z" }, { "Camera": {}, "Filename": "P1090343.MOV", "CameraPath": "Lumix", "NormalizedTimestamp": "2024-07-04T15:05:59Z", "LegacyTimestamp": "2024-07-04T17:05:59Z" }, { "Camera": {}, "Filename": "P1090344.MOV", "CameraPath": "Lumix", "NormalizedTimestamp": "2024-07-04T15:25:15Z", "LegacyTimestamp": "2024-07-04T17:25:15Z" }, { "Camera": {}, "Filename": "P1090345.MOV", "CameraPath": "Lumix", "NormalizedTimestamp": "2024-07-04T15:27:11Z", "LegacyTimestamp": "2024-07-04T17:27:11Z" }, { "Camera": {}, "Filename": "P1090346.MOV", "CameraPath": "Lumix", "NormalizedTimestamp": "2024-07-04T15:38:28Z", "LegacyTimestamp": "2024-07-04T17:38:28Z" }, { "Camera": {}, "Filename": "P1090347.MOV", "CameraPath": "Lumix", "NormalizedTimestamp": "2024-07-04T15:38:46Z", "LegacyTimestamp": "2024-07-04T17:38:46Z" }, { "Camera": {}, "Filename": "P1090348.MOV", "CameraPath": "Lumix", "NormalizedTimestamp": "2024-07-04T15:52:09Z", "LegacyTimestamp": "2024-07-04T17:52:09Z" }, { "Camera": {}, "Filename": "P1090349.MOV", "CameraPath": "Lumix", "NormalizedTimestamp": "2024-07-04T15:56:10Z", "LegacyTimestamp": "2024-07-04T17:56:10Z" }, { "Camera": {}, "Filename": "DJI_0619.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-04T16:06:58Z", "LegacyTimestamp": "2024-07-05T17:06:40Z" }, { "Camera": {}, "Filename": "DJI_0620.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-04T16:08:00Z", "LegacyTimestamp": "2024-07-05T17:07:10Z" }, { "Camera": {}, "Filename": "DJI_0621.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-04T16:08:42Z", "LegacyTimestamp": "2024-07-05T17:08:18Z" }, { "Camera": {}, "Filename": "DJI_0622.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-04T16:09:24Z", "LegacyTimestamp": "2024-07-05T17:08:49Z" }, { "Camera": {}, "Filename": "DJI_0623.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-04T16:10:08Z", "LegacyTimestamp": "2024-07-05T17:09:33Z" }, { "Camera": {}, "Filename": "DJI_0624.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-04T16:11:18Z", "LegacyTimestamp": "2024-07-05T17:10:33Z" }, { "Camera": {}, "Filename": "DJI_0625.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-04T16:12:06Z", "LegacyTimestamp": "2024-07-05T17:11:45Z" }, { "Camera": {}, "Filename": "DJI_0626.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-04T16:18:54Z", "LegacyTimestamp": "2024-07-05T17:14:57Z" }, { "Camera": {}, "Filename": "DJI_0627.MP4", "CameraPath": "Komarek", "NormalizedTimestamp": "2024-07-04T16:20:48Z", "LegacyTimestamp": "2024-07-05T17:19:02Z" }, { "Camera": {}, "Filename": "IMG_7331.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T16:33:53Z", "LegacyTimestamp": "2024-07-04T16:33:53Z" }, { "Camera": {}, "Filename": "IMG_7332.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T16:33:54Z", "LegacyTimestamp": "2024-07-04T16:33:54Z" }, { "Camera": {}, "Filename": "IMG_7331.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T16:33:55Z", "LegacyTimestamp": "2024-07-04T16:33:55Z" }, { "Camera": {}, "Filename": "IMG_7332.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T16:33:55Z", "LegacyTimestamp": "2024-07-04T16:33:55Z" }], [{ "Camera": {}, "Filename": "IMG_7333.MOV", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T17:06:24Z", "LegacyTimestamp": "2024-07-04T17:06:24Z" }, { "Camera": {}, "Filename": "IMG_7334.MOV", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T17:14:49Z", "LegacyTimestamp": "2024-07-04T17:14:49Z" }], [{ "Camera": {}, "Filename": "IMG_7335.MOV", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T17:49:46Z", "LegacyTimestamp": "2024-07-04T17:49:46Z" }, { "Camera": {}, "Filename": "IMG_7336.MOV", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:07:02Z", "LegacyTimestamp": "2024-07-04T18:07:02Z" }, { "Camera": {}, "Filename": "IMG_7337.MOV", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:07:30Z", "LegacyTimestamp": "2024-07-04T18:07:30Z" }, { "Camera": {}, "Filename": "IMG_7338.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:08:01Z", "LegacyTimestamp": "2024-07-04T18:08:01Z" }, { "Camera": {}, "Filename": "IMG_7339.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:08:02Z", "LegacyTimestamp": "2024-07-04T18:08:02Z" }, { "Camera": {}, "Filename": "IMG_7338.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:08:03Z", "LegacyTimestamp": "2024-07-04T18:08:03Z" }, { "Camera": {}, "Filename": "IMG_7339.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:08:03Z", "LegacyTimestamp": "2024-07-04T18:08:03Z" }, { "Camera": {}, "Filename": "IMG_7340.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:08:19Z", "LegacyTimestamp": "2024-07-04T18:08:19Z" }, { "Camera": {}, "Filename": "IMG_7341.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:08:20Z", "LegacyTimestamp": "2024-07-04T18:08:20Z" }, { "Camera": {}, "Filename": "IMG_7340.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:08:21Z", "LegacyTimestamp": "2024-07-04T18:08:21Z" }, { "Camera": {}, "Filename": "IMG_7341.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:08:21Z", "LegacyTimestamp": "2024-07-04T18:08:21Z" }, { "Camera": {}, "Filename": "IMG_7342.MOV", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:08:34Z", "LegacyTimestamp": "2024-07-04T18:08:34Z" }, { "Camera": {}, "Filename": "IMG_7343.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:09:33Z", "LegacyTimestamp": "2024-07-04T18:09:33Z" }, { "Camera": {}, "Filename": "IMG_7343.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:09:34Z", "LegacyTimestamp": "2024-07-04T18:09:34Z" }, { "Camera": {}, "Filename": "IMG_7344.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:09:35Z", "LegacyTimestamp": "2024-07-04T18:09:35Z" }, { "Camera": {}, "Filename": "IMG_7344.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:09:36Z", "LegacyTimestamp": "2024-07-04T18:09:36Z" }, { "Camera": {}, "Filename": "IMG_7345.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:09:38Z", "LegacyTimestamp": "2024-07-04T18:09:38Z" }, { "Camera": {}, "Filename": "IMG_7345.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:09:38Z", "LegacyTimestamp": "2024-07-04T18:09:38Z" }, { "Camera": {}, "Filename": "IMG_7346.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:09:46Z", "LegacyTimestamp": "2024-07-04T18:09:46Z" }, { "Camera": {}, "Filename": "IMG_7347.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:09:46Z", "LegacyTimestamp": "2024-07-04T18:09:46Z" }, { "Camera": {}, "Filename": "IMG_7346.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:09:47Z", "LegacyTimestamp": "2024-07-04T18:09:47Z" }, { "Camera": {}, "Filename": "IMG_7347.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:09:48Z", "LegacyTimestamp": "2024-07-04T18:09:48Z" }, { "Camera": {}, "Filename": "IMG_7348.MOV", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T18:27:52Z", "LegacyTimestamp": "2024-07-04T18:27:52Z" }], [{ "Camera": {}, "Filename": "IMG_7349.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T19:01:18Z", "LegacyTimestamp": "2024-07-04T19:01:18Z" }, { "Camera": {}, "Filename": "IMG_7349.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T19:01:18Z", "LegacyTimestamp": "2024-07-04T19:01:18Z" }], [{ "Camera": {}, "Filename": "IMG_7350.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T19:51:59Z", "LegacyTimestamp": "2024-07-04T19:51:59Z" }, { "Camera": {}, "Filename": "IMG_7350.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T19:51:59Z", "LegacyTimestamp": "2024-07-04T19:51:59Z" }], [{ "Camera": {}, "Filename": "IMG_7351.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T20:51:28Z", "LegacyTimestamp": "2024-07-04T20:51:28Z" }, { "Camera": {}, "Filename": "IMG_7351.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T20:51:30Z", "LegacyTimestamp": "2024-07-04T20:51:30Z" }], [{ "Camera": {}, "Filename": "IMG_7357.MOV", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T23:54:08Z", "LegacyTimestamp": "2024-07-04T23:54:08Z" }, { "Camera": {}, "Filename": "IMG_7358.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T23:55:27Z", "LegacyTimestamp": "2024-07-04T23:55:27Z" }, { "Camera": {}, "Filename": "IMG_7359.HEIC", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T23:55:28Z", "LegacyTimestamp": "2024-07-04T23:55:28Z" }, { "Camera": {}, "Filename": "IMG_7358.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T23:55:29Z", "LegacyTimestamp": "2024-07-04T23:55:29Z" }, { "Camera": {}, "Filename": "IMG_7359.mov", "CameraPath": "Tel Fil", "NormalizedTimestamp": "2024-07-04T23:55:29Z", "LegacyTimestamp": "2024-07-04T23:55:29Z" }]]];
+
+  const fromDirectories = projectData.reduce((total, day) => {
+    for (let block of day) {
+      for (let file of block) {
+        if (!total[file.CameraPath]) {
+          total[file.CameraPath] = [];
+        }
+        total[file.CameraPath].push(file.Filename);
+      }
+    }
+    return total
+  }, {} as Record<string, string[]>);
+
+  return (
+    <div className="container mx-auto py-8 px-4">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Podsumowanie projektu</h1>
+        <p className="text-muted-foreground mt-2">
+          Przegląd i analiza segregacji treści
+        </p>
+      </div>
+      <div className="grid w-full grid-cols-[2fr_auto_5fr] gap-5">
+        <div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Obecna struktura plików</CardTitle>
+              <CardDescription>
+                Katalogi w projekcie
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                {Object.keys(fromDirectories).map((dir) => (
+                  <Directory name={dir as string} files={fromDirectories[dir as string]} key={dir as string} />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="w-px bg-gray-300 flex-shrink-0"></div>
+        <div className="max-h-[70vh] overflow-y-auto mr-1">
+          <Card>
+            <CardHeader>
+              <CardTitle>Zbudowana struktura plików</CardTitle>
+              <CardDescription>
+                Katalogi w projekcie
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                {projectData.map((day, index) => {
+                  return (
+                    <>
+                      <Directory name={`Dzień ${index + 1}`} key={index} />
+                      <div className="pl-2">
+                        {day.map((block, index) => <Directory name={`Block ${index + 1}`} key={index} files={block.map(b => b.Filename)} />)}
+                      </div>
+                    </>
+                  )
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      {/* Action Buttons */}
+      <div className="mt-8 flex justify-between gap-4">
+        <Button asChild variant="secondary">
+          <Link to="/browse-project/1">Cofnij do przeglądu</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link to="/">Home</Link>
+        </Button>
+        <Button asChild>
+          <Link to="/copying-files">Ustaw kopiowanie</Link>
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function Directory({ name, files }: { name: string, files?: string[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div>
+      <div className="flex justify-between">
+        <h3 className="text-lg font-semibold mb-3">{name}</h3>
+        {files && <Button variant="outline" onClick={() => setIsOpen(!isOpen)}>{isOpen ? 'Hide' : 'View'}</Button>}
+      </div>
+      {files && <div className={clsx("my-2 grid transition-[grid-template-rows] duration-300 max-h-[200px]", isOpen ? "grid-rows-[1fr] overflow-y-auto" : "grid-rows-[0fr] overflow-hidden")}>
+        <div className={clsx("min-h-0 pl-2")}>
+          {files.map((file) => (
+            <div key={file}>{file}</div>
+          ))}
+        </div>
+      </div>}
+    </div>
+  )
+}
