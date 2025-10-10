@@ -2,9 +2,13 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 
 	"segregate-content/cmd/app"
 	"segregate-content/pkg/services"
@@ -43,6 +47,51 @@ func getEnvOrDefaultInt(key string, defaultValue int) int {
 	return defaultValue
 }
 
+type FileLoader struct {
+	http.Handler
+	app *app.App
+}
+
+func NewFileLoader(app *app.App) *FileLoader {
+	return &FileLoader{
+		app: app,
+	}
+}
+
+func (h *FileLoader) ServeHTTP(res http.ResponseWriter, req *http.Request) {
+	var err error
+	requestedFilename := strings.TrimPrefix(req.URL.Path, "/")
+	if !strings.HasPrefix(requestedFilename, "current-project") {
+		println("Invalid file path:", requestedFilename)
+		res.WriteHeader(http.StatusBadRequest)
+		res.Write([]byte("Invalid file path"))
+		return
+	}
+	requestedFilename = strings.TrimPrefix(requestedFilename, "current-project/")
+	println("Requesting file:", requestedFilename)
+	selectedProjectPath := h.app.GetSelectedProjectPath()
+	println("Selected project path:", selectedProjectPath)
+	println("Selected project path:", filepath.Join(selectedProjectPath, requestedFilename))
+	requestedFilename = filepath.Join(selectedProjectPath, requestedFilename)
+	if strings.HasSuffix(requestedFilename, ".insv") {
+		res.WriteHeader(http.StatusBadRequest)
+		res.Write([]byte(fmt.Sprintf("This kind of file is not supported: %s", requestedFilename)))
+		return
+	}
+	if strings.HasSuffix(requestedFilename, ".MOV") || strings.HasSuffix(requestedFilename, ".mov") || strings.HasSuffix(requestedFilename, ".MP4") {
+		res.WriteHeader(http.StatusBadRequest)
+		res.Write([]byte(fmt.Sprintf("This kind of file is not supported: %s", requestedFilename)))
+		return
+	}
+	fileData, err := os.ReadFile(requestedFilename)
+	if err != nil {
+		res.WriteHeader(http.StatusBadRequest)
+		res.Write([]byte(fmt.Sprintf("Could not load file %s", requestedFilename)))
+	}
+
+	res.Write(fileData)
+}
+
 func main() {
 	// Load environment variables from .env file
 	if err := godotenv.Load(); err != nil {
@@ -62,7 +111,7 @@ func main() {
 	appInstance := app.NewApp()
 	fileSelector := app.NewFileSelector(appInstance)
 	directorySelector := app.NewDirectorySelector(appInstance)
-
+	fileLoader := NewFileLoader(appInstance)
 	// services
 	elevationApiService := services.NewElevationApiService(googleProjectKey)
 
@@ -72,10 +121,10 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:             "segregate-content",
-		Width:             1024,
-		Height:            768,
-		MinWidth:          1024,
-		MinHeight:         768,
+		Width:             1280,
+		Height:            800,
+		MinWidth:          1280,
+		MinHeight:         800,
 		MaxWidth:          1280,
 		MaxHeight:         800,
 		DisableResize:     false,
@@ -85,7 +134,8 @@ func main() {
 		HideWindowOnClose: false,
 		BackgroundColour:  &options.RGBA{R: 255, G: 255, B: 255, A: 255},
 		AssetServer: &assetserver.Options{
-			Assets: assets,
+			Assets:  assets,
+			Handler: fileLoader,
 		},
 		Menu:             nil,
 		Logger:           nil,

@@ -31,7 +31,8 @@ func (c *CameraKomarek) HasCoordinates() bool {
 }
 
 func (c *CameraKomarek) ShouldProcessFile(file string) bool {
-	return strings.HasPrefix(file, "DJI_") && (strings.HasSuffix(file, ".MP4") || strings.HasSuffix(file, ".JPG") || strings.HasSuffix(file, ".DNG"))
+	// return strings.HasPrefix(file, "DJI_") && (strings.HasSuffix(file, ".MP4") || strings.HasSuffix(file, ".JPG") || strings.HasSuffix(file, ".DNG"))
+	return strings.HasPrefix(file, "DJI_") && (strings.HasSuffix(file, ".MP4") || strings.HasSuffix(file, ".JPG"))
 }
 
 func (c *CameraKomarek) NormalizeDateTime(datetime *time.Time, timezoneOffsetSeconds int) *time.Time {

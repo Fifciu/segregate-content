@@ -29,7 +29,8 @@ func (c *CameraLumix) HasCoordinates() bool {
 }
 
 func (c *CameraLumix) ShouldProcessFile(file string) bool {
-	return strings.HasPrefix(file, "P") && (strings.HasSuffix(file, ".MOV") || strings.HasSuffix(file, ".RW2") || strings.HasSuffix(file, ".JPG"))
+	return strings.HasPrefix(file, "P") && (strings.HasSuffix(file, ".MOV") || strings.HasSuffix(file, ".JPG"))
+	// return strings.HasPrefix(file, "P") && (strings.HasSuffix(file, ".MOV") || strings.HasSuffix(file, ".RW2") || strings.HasSuffix(file, ".JPG"))
 }
 
 func (c *CameraLumix) NormalizeDateTime(datetime *time.Time, timezoneOffsetSeconds int) *time.Time {

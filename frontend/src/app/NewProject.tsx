@@ -152,6 +152,11 @@ export default function NewProject() {
                     "Utwórz projekt"
                   )}
                 </Button>
+                <div className={isLoading ? "pointer-events-none opacity-50" : ""}>
+                  <Button asChild>
+                    <Link to={`/browse-project/1`}>Dalej mock</Link>
+                  </Button>
+                </div>
               </div>
               </div>
             </CardContent>
