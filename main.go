@@ -58,6 +58,10 @@ func NewFileLoader(app *app.App) *FileLoader {
 	}
 }
 
+func (h *FileLoader) IsVideo(filename string) bool {
+	return strings.HasSuffix(filename, ".MOV") || strings.HasSuffix(filename, ".mov") || strings.HasSuffix(filename, ".MP4")
+}
+
 func (h *FileLoader) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	var err error
 	requestedFilename := strings.TrimPrefix(req.URL.Path, "/")
@@ -78,9 +82,27 @@ func (h *FileLoader) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		res.Write([]byte(fmt.Sprintf("This kind of file is not supported: %s", requestedFilename)))
 		return
 	}
-	if strings.HasSuffix(requestedFilename, ".MOV") || strings.HasSuffix(requestedFilename, ".mov") || strings.HasSuffix(requestedFilename, ".MP4") {
-		res.WriteHeader(http.StatusBadRequest)
-		res.Write([]byte(fmt.Sprintf("This kind of file is not supported: %s", requestedFilename)))
+	// if strings.HasSuffix(requestedFilename, ".MOV") || strings.HasSuffix(requestedFilename, ".mov") || strings.HasSuffix(requestedFilename, ".MP4") {
+	// 	res.WriteHeader(http.StatusBadRequest)
+	// 	res.Write([]byte(fmt.Sprintf("This kind of file is not supported: %s", requestedFilename)))
+	// 	return
+	// }
+	if h.IsVideo(requestedFilename) {
+		file, err := os.Open(requestedFilename)
+		if err != nil {
+			res.WriteHeader(http.StatusBadRequest)
+			res.Write([]byte(fmt.Sprintf("Could not load file %s", requestedFilename)))
+			return
+		}
+		defer file.Close()
+
+		stat, err := file.Stat()
+		if err != nil {
+			res.WriteHeader(http.StatusBadRequest)
+			res.Write([]byte(fmt.Sprintf("Could not get file stat for %s", requestedFilename)))
+			return
+		}
+		http.ServeContent(res, req, requestedFilename, stat.ModTime(), file)
 		return
 	}
 	fileData, err := os.ReadFile(requestedFilename)

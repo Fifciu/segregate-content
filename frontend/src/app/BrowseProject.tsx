@@ -31,6 +31,10 @@ export default function BrowseProject() {
       }));
     }
   };
+
+  function isVideo(filename: string) {
+    return filename.endsWith('.MOV') || filename.endsWith('.mov') || filename.endsWith('.MP4');
+  }
   
   return (
     <div className="container mx-auto py-8 px-4 max-w-full overflow-hidden">
@@ -56,15 +60,15 @@ export default function BrowseProject() {
         { currentFile && 
           <div className="space-y-2 rounded-md overflow-hidden object-contain h-[518px] bg-slate-400">
             <div className="h-[100%] w-fit mx-auto shadow-xl">
-              <img src={`/current-project/${currentFile.CameraPath}/${currentFile.Filename}`} alt={currentFile.Filename} className="h-[100%]"/>
+              {isVideo(currentFile.Filename) ? <video src={`/current-project/${currentFile.CameraPath}/${currentFile.Filename}`} controls className="h-[100%]"/> : <img src={`/current-project/${currentFile.CameraPath}/${currentFile.Filename}`} alt={currentFile.Filename} className="h-[100%]"/>}
             </div>
             {/* Add your content here */}
           </div>
         }
           <div className="flex overflow-x-auto gap-2 mt-2 pb-2 h-[112px]">
             {projectData[currentDay][currentBlock].map((file, index) => (
-              <div key={file.CameraPath + file.Filename} className={clsx("transition border-[2px] w-[160px] h-[90px] bg-slate-500 flex-shrink-0 rounded-md overflow-hidden shadow-sm", file.Filename === currentFile.Filename && file.CameraPath === currentFile.CameraPath && file.NormalizedTimestamp === currentFile.NormalizedTimestamp ? 'border-red-500 shadow-md' : '')}>
-                <img src={`/current-project/${file.CameraPath}/${file.Filename}`} alt={file.Filename} className="w-full h-full object-cover" onClick={() => setCurrentFileIndex(index)} />
+              <div key={file.CameraPath + file.Filename} className={clsx("transition border-[2px] w-[160px] h-[90px] bg-slate-500 flex-shrink-0 rounded-md overflow-hidden shadow-sm", file.Filename === currentFile.Filename && file.CameraPath === currentFile.CameraPath && file.NormalizedTimestamp === currentFile.NormalizedTimestamp ? 'border-red-500 shadow-md' : '')} onClick={() => setCurrentFileIndex(index)}>
+              {isVideo(file.Filename) ? <div className="w-full h-full bg-slate-300">Video</div> : <img src={`/current-project/${file.CameraPath}/${file.Filename}`} alt={file.Filename} className="w-full h-full object-cover"  />}
               </div>
             ))}
           </div>
