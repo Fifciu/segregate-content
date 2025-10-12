@@ -6,6 +6,10 @@ import {cameras} from '../models';
 
 export function CreateProject(arg1:app.Project):Promise<Array<any>>;
 
+export function CreateThumbnail(arg1:string,arg2:app.ProcessedFile):Promise<string>;
+
 export function FindTimezone(arg1:string):Promise<maps.TimezoneResult>;
+
+export function IsVideo(arg1:string):Promise<boolean>;
 
 export function ProcessFiles(arg1:app.Project,arg2:Record<string, cameras.Camera>,arg3:number,arg4:maps.TimezoneResult):Promise<Array<app.ProcessedFile>>;

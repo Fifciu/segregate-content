@@ -6,8 +6,16 @@ export function CreateProject(arg1) {
   return window['go']['app']['Processor']['CreateProject'](arg1);
 }
 
+export function CreateThumbnail(arg1, arg2) {
+  return window['go']['app']['Processor']['CreateThumbnail'](arg1, arg2);
+}
+
 export function FindTimezone(arg1) {
   return window['go']['app']['Processor']['FindTimezone'](arg1);
+}
+
+export function IsVideo(arg1) {
+  return window['go']['app']['Processor']['IsVideo'](arg1);
 }
 
 export function ProcessFiles(arg1, arg2, arg3, arg4) {

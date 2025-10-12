@@ -68,7 +68,7 @@ export default function BrowseProject() {
           <div className="flex overflow-x-auto gap-2 mt-2 pb-2 h-[112px]">
             {projectData[currentDay][currentBlock].map((file, index) => (
               <div key={file.CameraPath + file.Filename} className={clsx("transition border-[2px] w-[160px] h-[90px] bg-slate-500 flex-shrink-0 rounded-md overflow-hidden shadow-sm", file.Filename === currentFile.Filename && file.CameraPath === currentFile.CameraPath && file.NormalizedTimestamp === currentFile.NormalizedTimestamp ? 'border-red-500 shadow-md' : '')} onClick={() => setCurrentFileIndex(index)}>
-              {isVideo(file.Filename) ? <div className="w-full h-full bg-slate-300">Video</div> : <img src={`/current-project/${file.CameraPath}/${file.Filename}`} alt={file.Filename} className="w-full h-full object-cover"  />}
+              {isVideo(file.Filename) ? <img src={`/current-project/thumbnails/${file.CameraPath}/${file.Filename}`} alt={file.Filename} className="w-full h-full object-cover"  /> : <img src={`/current-project/${file.CameraPath}/${file.Filename}`} alt={file.Filename} className="w-full h-full object-cover"  />}
               </div>
             ))}
           </div>

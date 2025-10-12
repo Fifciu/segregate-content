@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -62,6 +63,27 @@ func (h *FileLoader) IsVideo(filename string) bool {
 	return strings.HasSuffix(filename, ".MOV") || strings.HasSuffix(filename, ".mov") || strings.HasSuffix(filename, ".MP4")
 }
 
+func (h *FileLoader) slugify(input string) string {
+	// Convert to lowercase
+	slug := strings.ToLower(input)
+
+	// Replace spaces with hyphens
+	slug = strings.ReplaceAll(slug, " ", "-")
+
+	// Remove any non-alphanumeric characters except hyphens
+	reg := regexp.MustCompile(`[^a-z0-9-_.]`)
+	slug = reg.ReplaceAllString(slug, "")
+
+	// Remove consecutive hyphens
+	reg = regexp.MustCompile(`-+`)
+	slug = reg.ReplaceAllString(slug, "-")
+
+	// Remove leading/trailing hyphens
+	slug = strings.Trim(slug, "-")
+
+	return slug
+}
+
 func (h *FileLoader) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	var err error
 	requestedFilename := strings.TrimPrefix(req.URL.Path, "/")
@@ -76,6 +98,7 @@ func (h *FileLoader) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	selectedProjectPath := h.app.GetSelectedProjectPath()
 	println("Selected project path:", selectedProjectPath)
 	println("Selected project path:", filepath.Join(selectedProjectPath, requestedFilename))
+	notMergedFilename := requestedFilename
 	requestedFilename = filepath.Join(selectedProjectPath, requestedFilename)
 	if strings.HasSuffix(requestedFilename, ".insv") {
 		res.WriteHeader(http.StatusBadRequest)
@@ -88,6 +111,26 @@ func (h *FileLoader) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	// 	return
 	// }
 	if h.IsVideo(requestedFilename) {
+		fmt.Println(requestedFilename, " NOI")
+		if strings.HasPrefix(notMergedFilename, "thumbnails/") {
+			notMergedFilename = strings.TrimPrefix(notMergedFilename, "thumbnails/")
+			notMergedFilename = strings.Replace(notMergedFilename, "/", "-", 1)
+			ext := filepath.Ext(notMergedFilename)
+			notMergedFilename = strings.Replace(notMergedFilename, ext, ".jpg", 1)
+			notMergedFilename = h.slugify(notMergedFilename)
+			notMergedFilename = filepath.Join(h.app.GetSelectedProjectPath(), ".separate-content", "thumbnails", notMergedFilename)
+			fileData, err := os.ReadFile(notMergedFilename)
+			println("Requested filename:", notMergedFilename)
+			println("File data:", fileData)
+			println("Error:", err)
+			if err != nil {
+				res.WriteHeader(http.StatusBadRequest)
+				res.Write([]byte(fmt.Sprintf("Could not load file %s", notMergedFilename)))
+			}
+
+			res.Write(fileData)
+			return
+		}
 		file, err := os.Open(requestedFilename)
 		if err != nil {
 			res.WriteHeader(http.StatusBadRequest)
@@ -136,9 +179,9 @@ func main() {
 	fileLoader := NewFileLoader(appInstance)
 	// services
 	elevationApiService := services.NewElevationApiService(googleProjectKey)
-
+	thumbnailService := services.NewThumbnailService(appInstance.GetSelectedProjectPath)
 	// main action
-	processor := app.NewProcessor(appInstance, elevationApiService)
+	processor := app.NewProcessor(appInstance, elevationApiService, thumbnailService)
 
 	// Create application with options
 	err := wails.Run(&options.App{

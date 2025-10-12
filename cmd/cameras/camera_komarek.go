@@ -8,7 +8,9 @@ import (
 	"googlemaps.github.io/maps"
 )
 
-type CameraKomarek struct{}
+type CameraKomarek struct {
+	directory string
+}
 
 func (c *CameraKomarek) GetCameraType() int {
 	return CAMERA_KOMAREK
@@ -57,6 +59,14 @@ func (c *CameraKomarek) NormalizeDateTimeWithTimezone(datetime *time.Time, timez
 	targetTime = targetTime.Add(24 * time.Hour * -1)
 
 	return &targetTime
+}
+
+func (c *CameraKomarek) New(directory string) Camera {
+	return &CameraKomarek{directory: directory}
+}
+
+func (c *CameraKomarek) GetDirectory() string {
+	return c.directory
 }
 
 func isDJI(directory string, fullPath string) bool {

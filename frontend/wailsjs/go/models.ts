@@ -8,6 +8,7 @@ export namespace app {
 	    NormalizedTimestamp: any;
 	    // Go type: time
 	    LegacyTimestamp: any;
+	    Thumbnail?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new ProcessedFile(source);
@@ -20,6 +21,7 @@ export namespace app {
 	        this.CameraPath = source["CameraPath"];
 	        this.NormalizedTimestamp = this.convertValues(source["NormalizedTimestamp"], null);
 	        this.LegacyTimestamp = this.convertValues(source["LegacyTimestamp"], null);
+	        this.Thumbnail = source["Thumbnail"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

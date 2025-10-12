@@ -5,7 +5,9 @@ import (
 	"time"
 )
 
-type CameraIphoneFilip struct{}
+type CameraIphoneFilip struct {
+	directory string
+}
 
 func (c *CameraIphoneFilip) GetCameraType() int {
 	return CAMERA_IPHONE_FILIP
@@ -33,6 +35,14 @@ func (c *CameraIphoneFilip) ShouldProcessFile(file string) bool {
 
 func (c *CameraIphoneFilip) NormalizeDateTime(datetime *time.Time, timezoneOffsetSeconds int) *time.Time {
 	return datetime
+}
+
+func (c *CameraIphoneFilip) New(directory string) Camera {
+	return &CameraIphoneFilip{directory: directory}
+}
+
+func (c *CameraIphoneFilip) GetDirectory() string {
+	return c.directory
 }
 
 func isIphoneFilip(directory string, fullPath string) bool {

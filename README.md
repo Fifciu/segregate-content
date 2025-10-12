@@ -1,40 +1,10 @@
 # README
 
-## About
+This repo contains project faciliating my different hobby. This time I decided to choose absolutly different approach and focus on delivering MVP doing job for me, and don't care about code quality (you wouldn't believe how hard it might be, to prevent yourself from refactoring and thinking a lot before writing code!).
 
-This template comes with Vite, React, TypeScript, TailwindCSS and shadcn/ui.
+I chosen this approach as my free time is highly limited and the project has to do the job, not have beautiful clear code. After I finish, I will decide if I want spend time refactoring, adding new features, or just use it as it is.
 
-Built with `Wails v2.5.1` and [shadcn's CLI](https://ui.shadcn.com/docs/cli)
+Right now it is hard for me to imagine, not refactoring this monster, but we will see...
 
-### Using the Template
-```console
-wails init -n project-name -t https://github.com/Mahcks/wails-vite-react-tailwind-shadcnui-ts
-```
-
-```console
-cd frontend
-```
-
-```console
-npm install
-```
-
-### Installing Components
-To install components, use shadcn's CLI tool to install
-
-More info here: https://ui.shadcn.com/docs/cli#add
-
-Example:
-```console
-npx shadcn-ui@latest add [component]
-```
-
-## Live Development
-
-To run in live development mode, run `wails dev` in the project directory. In another terminal, go into the `frontend`
-directory and run `npm run dev`. The frontend dev server will run on http://localhost:34115. Connect to this in your
-browser and connect to your application.
-
-## Building
-
-To build a redistributable, production mode package, use `wails build`.
+## Requiremenets
+ffmpeg

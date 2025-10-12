@@ -2,6 +2,9 @@ package app
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"regexp"
 	"segregate-content/cmd/cameras"
 	"segregate-content/cmd/utilities"
 	"segregate-content/pkg/services"
@@ -14,7 +17,8 @@ import (
 
 type Processor struct {
 	app                 *App
-	elevationApiService *services.ElevationApiService
+	elevationApiService *services.ElevationApiService // it's not even elevation lol
+	thumbnailService    *services.ThumbnailService
 }
 
 type Project struct {
@@ -24,10 +28,11 @@ type Project struct {
 	HomeCountry string
 }
 
-func NewProcessor(app *App, elevationApiService *services.ElevationApiService) *Processor {
+func NewProcessor(app *App, elevationApiService *services.ElevationApiService, thumbnailService *services.ThumbnailService) *Processor {
 	return &Processor{
 		app:                 app,
 		elevationApiService: elevationApiService,
+		thumbnailService:    thumbnailService,
 	}
 }
 
@@ -42,6 +47,12 @@ func (p *Processor) doNeedTimezoneOffset(cameras []*cameras.Camera) bool {
 
 func (p *Processor) CreateProject(project *Project) ([][][]*ProcessedFile, error) {
 	fmt.Println("Processing project:", project)
+	p.app.SetSelectedProjectPath(project.Folder)
+	fmt.Println("Initializing thumbnail directories")
+	err := p.thumbnailService.InitDirectories()
+	if err != nil {
+		return nil, err
+	}
 	directoryExists, err := utilities.DirectoryExists(project.Folder)
 	if err != nil {
 		return nil, err
@@ -61,7 +72,7 @@ func (p *Processor) CreateProject(project *Project) ([][][]*ProcessedFile, error
 			fmt.Printf("Directory \"%s\" to camera: Unknown\n", directory)
 			continue
 		}
-		cameraMap[directory] = directoryToCamera
+		cameraMap[directory] = &directoryToCamera
 		fmt.Printf("Directory \"%s\" to camera: %s\n", directory, directoryToCamera)
 	}
 	cameraList := make([]*cameras.Camera, 0, len(cameraMap))
@@ -118,7 +129,7 @@ func (p *Processor) CreateProject(project *Project) ([][][]*ProcessedFile, error
 
 	// Print grouped files
 	for _, group := range groupedFiles {
-		fmt.Printf("Group: %d\n", group)
+		// fmt.Printf("Group: %d\n", group)
 		for _, file := range group {
 			fmt.Printf("File: %s, %s\n", file.Filename, file.NormalizedTimestamp.Format("2006-01-02 15:04:05.000"))
 		}
@@ -140,8 +151,8 @@ func (p *Processor) CreateProject(project *Project) ([][][]*ProcessedFile, error
 		}
 	}
 
-	p.app.SetSelectedProjectPath(project.Folder)
-	fmt.Println("Project processed")
+	fmt.Println("Project files processed")
+
 	return days, nil
 }
 
@@ -151,6 +162,11 @@ type ProcessedFile struct {
 	CameraPath          string
 	NormalizedTimestamp time.Time
 	LegacyTimestamp     time.Time
+	Thumbnail           *string
+}
+
+func (p *Processor) IsVideo(filename string) bool {
+	return strings.HasSuffix(filename, ".MOV") || strings.HasSuffix(filename, ".mov") || strings.HasSuffix(filename, ".MP4")
 }
 
 func (p *Processor) ProcessFiles(project *Project, cameraMap map[string]*cameras.Camera, diffSeconds int, timezone *maps.TimezoneResult) ([]*ProcessedFile, error) {
@@ -240,7 +256,18 @@ func (p *Processor) ProcessFiles(project *Project, cameraMap map[string]*cameras
 					CameraPath:          directory,
 					NormalizedTimestamp: *normalizedTimestamp,
 					LegacyTimestamp:     parsedTimestamp,
+					Thumbnail:           nil,
 				}
+
+				if p.IsVideo(file) {
+					thumbnailPath, err := p.CreateThumbnail(cameraPath, processedFile)
+					if err != nil {
+						fmt.Printf("Error creating thumbnail for %s: %v\n", file, err)
+					} else {
+						processedFile.Thumbnail = &thumbnailPath
+					}
+				}
+
 				processedFiles = append(processedFiles, processedFile)
 				fileTotalTime := time.Since(fileStartTime)
 				fmt.Printf("File %s: Total processing time %v (create date: %v, parse: %v)\n",
@@ -286,6 +313,15 @@ func (p *Processor) ProcessFiles(project *Project, cameraMap map[string]*cameras
 					CameraPath:          directory,
 					NormalizedTimestamp: *normalizedTimestamp,
 					LegacyTimestamp:     parsedTimestamp,
+					Thumbnail:           nil,
+				}
+				if p.IsVideo(file) {
+					thumbnailPath, err := p.CreateThumbnail(cameraPath, processedFile)
+					if err != nil {
+						fmt.Printf("Error creating thumbnail for %s: %v\n", file, err)
+					} else {
+						processedFile.Thumbnail = &thumbnailPath
+					}
 				}
 				processedFiles = append(processedFiles, processedFile)
 				fileTotalTime := time.Since(fileStartTime)
@@ -307,6 +343,48 @@ func (p *Processor) ProcessFiles(project *Project, cameraMap map[string]*cameras
 	})
 
 	return processedFiles, nil
+}
+
+func (p *Processor) slugify(input string) string {
+	// Convert to lowercase
+	slug := strings.ToLower(input)
+
+	// Replace spaces with hyphens
+	slug = strings.ReplaceAll(slug, " ", "-")
+
+	// Remove any non-alphanumeric characters except hyphens
+	reg := regexp.MustCompile(`[^a-z0-9-_]`)
+	slug = reg.ReplaceAllString(slug, "")
+
+	// Remove consecutive hyphens
+	reg = regexp.MustCompile(`-+`)
+	slug = reg.ReplaceAllString(slug, "-")
+
+	// Remove leading/trailing hyphens
+	slug = strings.Trim(slug, "-")
+
+	return slug
+}
+
+// TODO: It should be limited to take maximum amount of space to not overflow disk
+func (p *Processor) CreateThumbnail(cameraPath string, processedFile *ProcessedFile) (string, error) {
+	// Build new file path
+	cameraDirectory := (*processedFile.Camera).GetDirectory()
+	slugifiedCameraDirectory := p.slugify(cameraDirectory)
+	filenameWithoutExt := strings.TrimSuffix(processedFile.Filename, filepath.Ext(processedFile.Filename))
+	slugifiedFilename := p.slugify(filenameWithoutExt)
+	slugifiedNewFilename := fmt.Sprintf("%s-%s.jpg", slugifiedCameraDirectory, slugifiedFilename)
+	thumbnailPath := filepath.Join(p.app.GetSelectedProjectPath(), ".separate-content", "thumbnails", slugifiedNewFilename)
+	if _, err := os.Stat(thumbnailPath); os.IsNotExist(err) {
+		// Create thumbnail
+		fmt.Println(fmt.Sprintf("%s/%s", cameraPath, processedFile.Filename), "INPUTEk")
+		err := p.thumbnailService.CreateThumbnail(fmt.Sprintf("%s/%s", cameraPath, processedFile.Filename), thumbnailPath)
+		if err != nil {
+			return "", err
+		}
+		return thumbnailPath, nil
+	}
+	return thumbnailPath, nil
 }
 
 func (p *Processor) FindTimezone(cameraWithCoordinatesPath string) (*maps.TimezoneResult, *maps.TimezoneResult, error) {

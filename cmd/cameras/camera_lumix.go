@@ -6,7 +6,9 @@ import (
 	"time"
 )
 
-type CameraLumix struct{}
+type CameraLumix struct {
+	directory string
+}
 
 func (c *CameraLumix) GetCameraType() int {
 	return CAMERA_LUMIX
@@ -36,6 +38,14 @@ func (c *CameraLumix) ShouldProcessFile(file string) bool {
 func (c *CameraLumix) NormalizeDateTime(datetime *time.Time, timezoneOffsetSeconds int) *time.Time {
 	t := datetime.Add(time.Duration(timezoneOffsetSeconds) * time.Second * -1)
 	return &t
+}
+
+func (c *CameraLumix) New(directory string) Camera {
+	return &CameraLumix{directory: directory}
+}
+
+func (c *CameraLumix) GetDirectory() string {
+	return c.directory
 }
 
 func isLumix(directory string, fullPath string) bool {

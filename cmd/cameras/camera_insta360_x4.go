@@ -6,7 +6,9 @@ import (
 	"time"
 )
 
-type CameraInsta360X4 struct{}
+type CameraInsta360X4 struct {
+	directory string
+}
 
 func (c *CameraInsta360X4) GetCameraType() int {
 	return CAMERA_INSTA360_X4
@@ -34,6 +36,14 @@ func (c *CameraInsta360X4) ShouldProcessFile(file string) bool {
 
 func (c *CameraInsta360X4) NormalizeDateTime(datetime *time.Time, timezoneOffsetSeconds int) *time.Time {
 	return datetime
+}
+
+func (c *CameraInsta360X4) New(directory string) Camera {
+	return &CameraInsta360X4{directory: directory}
+}
+
+func (c *CameraInsta360X4) GetDirectory() string {
+	return c.directory
 }
 
 func isInsta360_X4(directory string, fullPath string) bool {

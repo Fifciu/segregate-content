@@ -10,6 +10,8 @@ type Camera interface {
 	HasCoordinates() bool
 	ShouldProcessFile(file string) bool
 	NormalizeDateTime(datetime *time.Time, timezoneOffsetSeconds int) *time.Time
+	New(directory string) Camera
+	GetDirectory() string
 }
 
 const (
@@ -30,10 +32,10 @@ var cameras = []Camera{
 	&CameraInsta360X4{},
 }
 
-func DirectoryToCamera(directory string, fullPath string) *Camera {
+func DirectoryToCamera(directory string, fullPath string) Camera {
 	for _, camera := range cameras {
 		if camera.IsCamera(directory, fullPath) {
-			return &camera
+			return camera.New(directory)
 		}
 	}
 	return nil

@@ -5,7 +5,9 @@ import (
 	"time"
 )
 
-type CameraIphoneIga struct{}
+type CameraIphoneIga struct {
+	directory string
+}
 
 func (c *CameraIphoneIga) GetCameraType() int {
 	return CAMERA_IPHONE_IGA
@@ -33,6 +35,14 @@ func (c *CameraIphoneIga) ShouldProcessFile(file string) bool {
 
 func (c *CameraIphoneIga) NormalizeDateTime(datetime *time.Time, timezoneOffsetSeconds int) *time.Time {
 	return datetime
+}
+
+func (c *CameraIphoneIga) New(directory string) Camera {
+	return &CameraIphoneIga{directory: directory}
+}
+
+func (c *CameraIphoneIga) GetDirectory() string {
+	return c.directory
 }
 
 func isIphoneIga(directory string, fullPath string) bool {
