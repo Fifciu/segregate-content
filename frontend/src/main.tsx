@@ -7,18 +7,21 @@ import ProjectSummary from './app/ProjectSummary.tsx'
 import CopyingFiles from './app/CopyingFiles.tsx'
 import './index.css'
 import { HashRouter, Route, Routes } from "react-router";
+import { BlocksProvider } from './app/hooks/useBlocksData.tsx'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <HashRouter>
-      <Routes>
-        <Route index element={<Home />} />
-        <Route path="new-project" element={<NewProject />} />
-        <Route path="browse-project/:projectId" element={<BrowseProject />} />
-        <Route path="project-summary" element={<ProjectSummary />} />
-        <Route path="copying-files" element={<CopyingFiles />} />
-        {/* <Route path="about" element={<About />} /> */}
-      </Routes>
-    </HashRouter>
+    <BlocksProvider>
+      <HashRouter>
+        <Routes>
+          <Route index element={<Home />} />
+          <Route path="new-project" element={<NewProject />} />
+          <Route path="browse-project/:projectId" element={<BrowseProject />} />
+          <Route path="project-summary" element={<ProjectSummary />} />
+          <Route path="copying-files" element={<CopyingFiles />} />
+          {/* <Route path="about" element={<About />} /> */}
+        </Routes>
+      </HashRouter>
+    </BlocksProvider>
   </React.StrictMode>,
 )

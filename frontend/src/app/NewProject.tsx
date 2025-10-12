@@ -5,10 +5,12 @@ import { useState } from "react"
   import { SelectFile, GetFile } from "../../wailsjs/go/app/FileSelector"
 import { SelectDirectory, GetDirectory } from "../../wailsjs/go/app/DirectorySelector"
 import { CreateProject } from "../../wailsjs/go/app/Processor"
+import { useBlocksData } from "./hooks/useBlocksData.tsx";
 
 const HOME_COUNTRY = "Polska";
 
 export default function NewProject() {
+  const { setDays } = useBlocksData();
   const [formData, setFormData] = useState({
     name: "Islandia",
     // TODO: I could keep it in the backend to prevent overwriting
@@ -47,7 +49,8 @@ export default function NewProject() {
         PlanFile: formData.planFile || "",
         HomeCountry: HOME_COUNTRY
       });
-      console.log(resp, 'RSP');
+      console.log(JSON.stringify(resp), 'RSP');
+      setDays(resp);
     } catch (err) {
       setError(err as string)
     }
