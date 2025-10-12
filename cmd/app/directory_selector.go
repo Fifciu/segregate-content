@@ -5,11 +5,12 @@ import (
 )
 
 type DirectorySelector struct {
-	app       *App
-	directory string
+	app                  *App
+	sourceDirectory      string
+	destinationDirectory string
 }
 
-func (d *DirectorySelector) SelectDirectory() (string, error) {
+func (d *DirectorySelector) SelectDirectory(isSource bool) (string, error) {
 	selection, err := runtime.OpenDirectoryDialog(d.app.GetCtx(), runtime.OpenDialogOptions{
 		Title: "Wybierz folder",
 	})
@@ -19,12 +20,20 @@ func (d *DirectorySelector) SelectDirectory() (string, error) {
 	if selection == "" {
 		return "", err
 	}
-	d.directory = selection
-	return d.directory, nil
+	if isSource {
+		d.sourceDirectory = selection
+	} else {
+		d.destinationDirectory = selection
+	}
+	return selection, nil
 }
 
-func (d *DirectorySelector) GetDirectory() string {
-	return d.directory
+func (d *DirectorySelector) GetSourceDirectory() string {
+	return d.sourceDirectory
+}
+
+func (d *DirectorySelector) GetDestinationDirectory() string {
+	return d.destinationDirectory
 }
 
 func NewDirectorySelector(app *App) *DirectorySelector {

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Link } from "react-router"
 import { useState } from "react"
   import { SelectFile, GetFile } from "../../wailsjs/go/app/FileSelector"
-import { SelectDirectory, GetDirectory } from "../../wailsjs/go/app/DirectorySelector"
+import { SelectDirectory, GetSourceDirectory } from "../../wailsjs/go/app/DirectorySelector"
 import { CreateProject } from "../../wailsjs/go/app/Processor"
 import { useBlocksData } from "./hooks/useBlocksData.tsx";
 
@@ -34,8 +34,8 @@ export default function NewProject() {
       const file = await GetFile();
       handleInputChange(field, file)
     } else {
-      await SelectDirectory()
-      const directory = await GetDirectory()
+      await SelectDirectory(true)
+      const directory = await GetSourceDirectory()
       handleInputChange(field, directory)
     }
   }
