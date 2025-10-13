@@ -181,7 +181,7 @@ func main() {
 	elevationApiService := services.NewElevationApiService(googleProjectKey)
 	thumbnailService := services.NewThumbnailService(appInstance.GetSelectedProjectPath)
 	// main action
-	processor := app.NewProcessor(appInstance, elevationApiService, thumbnailService)
+	processor := app.NewProcessor(appInstance, elevationApiService, thumbnailService, directorySelector)
 
 	// Create application with options
 	err := wails.Run(&options.App{

@@ -5,6 +5,7 @@ import NewProject from './app/NewProject.tsx'
 import BrowseProject from './app/BrowseProject.tsx'
 import ProjectSummary from './app/ProjectSummary.tsx'
 import CopyingFiles from './app/CopyingFiles.tsx'
+import SucceedPage from './app/SucceedPage.tsx'
 import './index.css'
 import { HashRouter, Route, Routes } from "react-router";
 import { BlocksProvider } from './app/hooks/useBlocksData.tsx'
@@ -19,6 +20,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           <Route path="browse-project/:projectId" element={<BrowseProject />} />
           <Route path="project-summary" element={<ProjectSummary />} />
           <Route path="copying-files" element={<CopyingFiles />} />
+          <Route path="succeed" element={<SucceedPage />} />
           {/* <Route path="about" element={<About />} /> */}
         </Routes>
       </HashRouter>

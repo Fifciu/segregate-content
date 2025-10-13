@@ -1,10 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 import { SelectDirectory, GetDestinationDirectory } from "../../wailsjs/go/app/DirectorySelector";
+import { CopyFiles } from "../../wailsjs/go/app/Processor";
+import { useBlocksData } from "./hooks/useBlocksData.tsx";
+import { app } from "../../wailsjs/go/models.ts";
 
 export default function CopyingFiles() {
+  const { prepareDaysForCopy } = useBlocksData();
+  const navigate = useNavigate();
   const [destinationDirectory, setDestinationDirectory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,7 +24,12 @@ export default function CopyingFiles() {
     try {
       // TODO: Implement copying logic here
       console.log("Starting copying to:", destinationDirectory);
+      const prepared = prepareDaysForCopy().map(day => new app.Day(day));
+      await CopyFiles(prepared);
       // Add your copying implementation here
+      
+      // Navigate to success page after copying is complete
+      navigate("/succeed");
     } catch (error) {
       console.error("Error during copying:", error);
     } finally {
@@ -82,6 +92,9 @@ export default function CopyingFiles() {
               </Button>
               <Button asChild disabled={isLoading}>
                 <Link to="/">Home</Link>
+              </Button>
+              <Button asChild disabled={isLoading}>
+                <Link to="/succeed">Sukces</Link>
               </Button>
             </div>
           </CardContent>

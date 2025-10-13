@@ -304,3 +304,16 @@ func ParseDateTimeStringWithTimezone(dateTimeStr string) (time.Time, error) {
 
 	return t, nil
 }
+
+func CopyFile(sourceFile, destinationFile string) error {
+	data, err := os.ReadFile(sourceFile)
+	if err != nil {
+		return err
+	}
+	// Write data to dst
+	err = os.WriteFile(destinationFile, data, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
+}

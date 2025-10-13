@@ -15,10 +15,20 @@ import (
 	"googlemaps.github.io/maps"
 )
 
+type Day struct {
+	Blocks []Block `json:"blocks"`
+}
+
+type Block struct {
+	Name  string           `json:"name"`
+	Files []*ProcessedFile `json:"files"`
+}
+
 type Processor struct {
 	app                 *App
 	elevationApiService *services.ElevationApiService // it's not even elevation lol
 	thumbnailService    *services.ThumbnailService
+	directorySelector   *DirectorySelector
 }
 
 type Project struct {
@@ -28,11 +38,12 @@ type Project struct {
 	HomeCountry string
 }
 
-func NewProcessor(app *App, elevationApiService *services.ElevationApiService, thumbnailService *services.ThumbnailService) *Processor {
+func NewProcessor(app *App, elevationApiService *services.ElevationApiService, thumbnailService *services.ThumbnailService, directorySelector *DirectorySelector) *Processor {
 	return &Processor{
 		app:                 app,
 		elevationApiService: elevationApiService,
 		thumbnailService:    thumbnailService,
+		directorySelector:   directorySelector,
 	}
 }
 
@@ -105,7 +116,7 @@ func (p *Processor) CreateProject(project *Project) ([][][]*ProcessedFile, error
 	fmt.Println("Timezone:", timezone)
 	fmt.Println("Home city timezone:", homeCityTimezone)
 	fmt.Println("Timezone difference:", diffSeconds)
-	processedFiles, err := p.ProcessFiles(project, cameraMap, diffSeconds, timezone)
+	processedFiles, err := p.processFiles(project, cameraMap, diffSeconds, timezone)
 	if err != nil {
 		return nil, err
 	}
@@ -169,9 +180,9 @@ func (p *Processor) IsVideo(filename string) bool {
 	return strings.HasSuffix(filename, ".MOV") || strings.HasSuffix(filename, ".mov") || strings.HasSuffix(filename, ".MP4")
 }
 
-func (p *Processor) ProcessFiles(project *Project, cameraMap map[string]*cameras.Camera, diffSeconds int, timezone *maps.TimezoneResult) ([]*ProcessedFile, error) {
+func (p *Processor) processFiles(project *Project, cameraMap map[string]*cameras.Camera, diffSeconds int, timezone *maps.TimezoneResult) ([]*ProcessedFile, error) {
 	startTime := time.Now()
-	fmt.Printf("ProcessFiles started at: %s\n", startTime.Format("2006-01-02 15:04:05.000"))
+	fmt.Printf("processFiles started at: %s\n", startTime.Format("2006-01-02 15:04:05.000"))
 
 	processedFiles := make([]*ProcessedFile, 0)
 	totalFiles := 0
@@ -333,8 +344,8 @@ func (p *Processor) ProcessFiles(project *Project, cameraMap map[string]*cameras
 	}
 
 	totalTime := time.Since(startTime)
-	fmt.Printf("ProcessFiles completed at: %s\n", time.Now().Format("2006-01-02 15:04:05.000"))
-	fmt.Printf("ProcessFiles summary: %d total files, %d processed, %d skipped in %v\n",
+	fmt.Printf("processFiles completed at: %s\n", time.Now().Format("2006-01-02 15:04:05.000"))
+	fmt.Printf("processFiles summary: %d total files, %d processed, %d skipped in %v\n",
 		totalFiles, processedCount, totalFiles-processedCount, totalTime)
 
 	// Sort processedFiles by NormalizedTimestamp in ascending order
@@ -436,4 +447,49 @@ func (p *Processor) FindTimezone(cameraWithCoordinatesPath string) (*maps.Timezo
 		}
 	}
 	return nil, nil, fmt.Errorf("No timezone found")
+}
+
+func (p *Processor) CopyFiles(days []*Day) error {
+	sourceDirectory := p.app.GetSelectedProjectPath()
+	if sourceDirectory == "" {
+		return fmt.Errorf("source directory is not set")
+	}
+	destinationDirectory := p.directorySelector.GetDestinationDirectory()
+	if destinationDirectory == "" {
+		return fmt.Errorf("destination directory is not set")
+	}
+	// Make directories
+	for i, day := range days {
+		dayDirectory := filepath.Join(destinationDirectory, fmt.Sprintf("Dzień %d", i+1))
+		if _, err := os.Stat(dayDirectory); os.IsNotExist(err) {
+			err := os.Mkdir(dayDirectory, 0755)
+			if err != nil {
+				return err
+			}
+		}
+		for _, block := range day.Blocks {
+			blockDirectory := filepath.Join(dayDirectory, block.Name)
+			if _, err := os.Stat(blockDirectory); os.IsNotExist(err) {
+				err := os.Mkdir(blockDirectory, 0755)
+				if err != nil {
+					return err
+				}
+			}
+
+			fmt.Println("Copying files for block:", block.Name)
+			fmt.Println("Copying files files:", block.Files)
+
+			// Copy files
+			for _, file := range block.Files {
+				sourceFile := filepath.Join(sourceDirectory, file.CameraPath, file.Filename)
+				destinationFile := filepath.Join(blockDirectory, file.Filename)
+				err := utilities.CopyFile(sourceFile, destinationFile)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
 }
